@@ -1,0 +1,45 @@
+---
+import Base from "../layouts/Base.astro";
+import catalog from "../../public/exports/catalog.json";
+const counts = {
+  atoms: catalog.atoms.length,
+  compositions: catalog.compositions.length,
+  rules: catalog.rules.length,
+};
+const byType: Record<string, number> = {};
+for (const a of catalog.atoms) byType[a.type] = (byType[a.type] ?? 0) + 1;
+---
+<Base title="Home" description="Prompt engineering as a canonical, machine-readable, versioned library.">
+  <h1>prompt-atoms</h1>
+  <p style="font-size: 1.125rem; color: var(--muted); max-width: 40rem;">
+    A typed, versioned, composable library of prompt-engineering primitives —
+    personas, constraints, formats, tool-use templates, refusal patterns,
+    output schemas — replacing closed vendor cookbooks and scattered
+    snippets with an open, machine-readable catalog.
+  </p>
+
+  <h2>Catalog at v{catalog.version}</h2>
+  <ul>
+    <li><strong>{counts.atoms}</strong> atoms across {Object.keys(byType).length} types</li>
+    <li><strong>{counts.compositions}</strong> compositions</li>
+    <li><strong>{counts.rules}</strong> compatibility rules</li>
+  </ul>
+
+  <h2>Atom types</h2>
+  <ul>
+    {Object.entries(byType).map(([type, n]) => (
+      <li><a href={`/atoms/?type=${type}`}>{type}</a> — {n} atoms</li>
+    ))}
+  </ul>
+
+  <h2>Civilization-grade properties</h2>
+  <p>Every artifact in this catalog satisfies six properties verified in CI:</p>
+  <ul>
+    <li><strong>Typed</strong> — every atom, composition, and rule validates against a JSON Schema.</li>
+    <li><strong>Versioned</strong> — every atom has a semver <code>version</code> field; compositions pin by version.</li>
+    <li><strong>Machine-readable</strong> — <a href="/exports/catalog.json">/exports/catalog.json</a> is the canonical manifest.</li>
+    <li><strong>Composable</strong> — compositions reference atoms by ID; references resolve in CI.</li>
+    <li><strong>Open</strong> — Apache-2.0 licensed.</li>
+    <li><strong>Durable</strong> — no external dependencies in the hot path.</li>
+  </ul>
+</Base>
