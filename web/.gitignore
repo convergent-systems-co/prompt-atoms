@@ -1,0 +1,9 @@
+.astro/
+.wrangler/
+dist/
+node_modules/
+public/atoms/
+public/prompts/
+public/rules/
+public/schemas/
+public/exports/

@@ -1,0 +1,15 @@
+{
+  "schema": "https://prompt-atoms.com/schemas/rule-v1.json",
+  "type": "format-compatibility",
+  "id": "json-requires-strict-format",
+  "version": "1.0.0",
+  "name": "JSON output requires strict JSON format",
+  "description": "output-schema/json-object-with-summary requires format-instruction/json-strict. markdown-with-citations would wrap the JSON in fences and break downstream parsers.",
+  "predicate": {
+    "subject_ref": "prompt-atoms://atoms/output-schema/json-object-with-summary",
+    "condition": "eq",
+    "value": "prompt-atoms://atoms/format-instruction/json-strict"
+  },
+  "effect": "require",
+  "rationale": "Output schemas that declare JSON must be paired with a format-instruction that emits raw JSON. markdown-with-citations would emit fences around the JSON and break any consumer that parses with json.loads() or JSON.parse()."
+}

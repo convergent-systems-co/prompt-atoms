@@ -1,0 +1,12 @@
+---
+const { composition } = Astro.props;
+const href = `/prompts/${composition.id}/`;
+const refCount = Object.values(composition.references).flat().length;
+---
+<article style="border: 1px solid var(--border); border-radius: 0.5rem; padding: 1rem; background: var(--card);">
+  <header style="display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 0.5rem;">
+    <h3 style="margin: 0;"><a href={href}>{composition.name}</a></h3>
+    <code style="color: var(--muted); font-size: 0.75rem;">v{composition.version} · {refCount} refs</code>
+  </header>
+  {composition.description && <p style="margin: 0.5rem 0; color: var(--muted);">{composition.description}</p>}
+</article>

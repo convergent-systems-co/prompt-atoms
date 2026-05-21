@@ -1,0 +1,9 @@
+---
+const { ref, version } = Astro.props;
+const match = ref.match(/^prompt-atoms:\/\/atoms\/([a-z-]+)\/([a-z0-9-]+)$/);
+const href = match ? `/atoms/${match[1]}/${match[2]}/` : "#";
+const label = match ? `${match[1]}/${match[2]}` : ref;
+---
+<a href={href} style="display: inline-block; font-family: ui-monospace, monospace; font-size: 0.85rem; padding: 0.25rem 0.5rem; background: #f0f0f0; border-radius: 0.25rem; text-decoration: none; color: var(--fg);">
+  {label} <span style="color: var(--muted);">@ {version}</span>
+</a>

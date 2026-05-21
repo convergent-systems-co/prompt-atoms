@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Install" description="How to obtain a local copy of prompt-atoms.">
+  <h1>Install</h1>
+
+  <h2>As an HTTPS consumer (recommended)</h2>
+  <p>Fetch from the deployed catalog:</p>
+  <pre><code>curl https://prompt-atoms.com/exports/catalog.json -o catalog.json</code></pre>
+
+  <h2>As a git submodule of the umbrella</h2>
+  <p>The <a href="https://github.com/convergent-systems-co/atoms">atoms umbrella</a>
+  pins every <code>*-Atoms</code> catalog as a submodule. A single clone gives you
+  all of them at known-good revisions.</p>
+  <pre><code>git clone --recurse-submodules https://github.com/convergent-systems-co/atoms.git</code></pre>
+
+  <h2>As a standalone clone</h2>
+  <pre><code>git clone https://github.com/convergent-systems-co/prompt-atoms.git
+cd prompt-atoms
+python3 scripts/validate.py    # confirms all atoms validate
+python3 scripts/build-exports.py  # regenerates exports/catalog.json</code></pre>
+
+  <h2>Dependencies</h2>
+  <ul>
+    <li>Python 3.11+ with <code>jsonschema</code> (validator and builder)</li>
+    <li>Node 20+ and pnpm (only required if you build the <code>web/</code> site locally)</li>
+  </ul>
+</Base>

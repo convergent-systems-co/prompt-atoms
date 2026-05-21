@@ -1,0 +1,39 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="How to use" description="How to consume prompt-atoms in your application.">
+  <h1>How to use prompt-atoms</h1>
+
+  <h2>Read the catalog over HTTPS</h2>
+  <p>Every artifact is served under stable URLs with correct content-types:</p>
+  <pre><code>curl https://prompt-atoms.com/exports/catalog.json
+curl https://prompt-atoms.com/atoms/persona/code-reviewer-strict.json
+curl https://prompt-atoms.com/prompts/code-reviewer-strict.json
+curl https://prompt-atoms.com/schemas/composition-v1.json</code></pre>
+
+  <h2>Resolve a composition</h2>
+  <p>A composition lists references to atoms by URI and version. To render the
+  composition as a system prompt, fetch each referenced atom, concatenate their
+  <code>content</code> fields in the order: persona → constraints → format → tool-use → refusals → output schema.</p>
+
+  <pre><code>{`// pseudo-code
+const composition = await fetch("/prompts/code-reviewer-strict.json").then(r => r.json());
+const refs = composition.references;
+const atoms = await Promise.all([
+  fetch(uriToUrl(refs.persona.ref)).then(r => r.json()),
+  ...refs.constraints.map(r => fetch(uriToUrl(r.ref)).then(r => r.json())),
+  fetch(uriToUrl(refs.format_instruction.ref)).then(r => r.json()),
+  // ... etc
+]);
+const systemPrompt = atoms.map(a => a.content).join("\\n\\n");`}</code></pre>
+
+  <h2>Vendor selection</h2>
+  <p>Each atom declares which vendor families it works with via the <code>vendors</code> array
+  (<code>claude</code>, <code>gpt</code>, <code>llama</code>, <code>gemini</code>, <code>mistral</code>, <code>any</code>).
+  Filter atoms to your target vendor before rendering.</p>
+
+  <h2>Compatibility rules</h2>
+  <p>Rules in <a href="/exports/catalog.json"><code>/exports/catalog.json</code></a> (under the <code>rules</code>
+  key) declare predicates over atoms — e.g., "<code>json-object-with-summary</code> requires <code>json-strict</code>
+  as its format instruction". A composition that violates a <code>require</code>-effect rule is malformed.</p>
+</Base>

@@ -1,0 +1,43 @@
+---
+import Base from "../../../layouts/Base.astro";
+import catalog from "../../../../public/exports/catalog.json";
+
+export function getStaticPaths() {
+  return catalog.atoms.map((atom: any) => ({
+    params: { type: atom.type, id: atom.id },
+    props: { atom },
+  }));
+}
+
+const { atom } = Astro.props;
+---
+<Base title={atom.name} description={atom.description ?? `${atom.type} atom`}>
+  <p><a href="/atoms/">← All atoms</a></p>
+  <h1>{atom.name}</h1>
+  <p style="color: var(--muted);">
+    <code>{atom.type}</code> · <code>v{atom.version}</code>
+    {atom.vendors && atom.vendors.length > 0 && (
+      <> · vendors: {atom.vendors.join(", ")}</>
+    )}
+  </p>
+
+  {atom.description && <p>{atom.description}</p>}
+
+  {atom.tags && atom.tags.length > 0 && (
+    <p>
+      Tags: {atom.tags.map((tag: string) => (
+        <span style="display: inline-block; font-size: 0.875rem; background: #eef; padding: 0.125rem 0.5rem; border-radius: 0.25rem; margin-right: 0.25rem;">{tag}</span>
+      ))}
+    </p>
+  )}
+
+  <h2>Content</h2>
+  <pre style="white-space: pre-wrap;"><code>{atom.content}</code></pre>
+
+  {atom.applicable_turns && (
+    <p style="color: var(--muted);"><strong>Applicable turns:</strong> {atom.applicable_turns.join(", ")}</p>
+  )}
+
+  <h2>Raw atom</h2>
+  <p><a href={`/atoms/${atom.type}/${atom.id}.json`}>/atoms/{atom.type}/{atom.id}.json</a> · <a href={`/schemas/atom-v1.json`}>schema</a></p>
+</Base>

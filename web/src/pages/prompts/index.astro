@@ -1,0 +1,15 @@
+---
+import Base from "../../layouts/Base.astro";
+import CompositionCard from "../../components/CompositionCard.astro";
+import catalog from "../../../public/exports/catalog.json";
+
+const compositions = catalog.compositions.slice().sort((a: any, b: any) => a.id.localeCompare(b.id));
+---
+<Base title="Compositions" description="Prompt compositions — assembled personas, constraints, formats, and schemas.">
+  <h1>Compositions</h1>
+  <p>{compositions.length} composition{compositions.length === 1 ? "" : "s"} — each assembles atoms into a complete system prompt.</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr)); gap: 1rem; margin-top: 2rem;">
+    {compositions.map((c: any) => <CompositionCard composition={c} />)}
+  </div>
+</Base>
