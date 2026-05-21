@@ -25,6 +25,16 @@
     },
     "name": { "type": "string", "minLength": 1, "maxLength": 80 },
     "description": { "type": "string", "maxLength": 500 },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "maxLength": 40 },
+      "uniqueItems": true
+    },
+    "vendors": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["claude", "gpt", "llama", "gemini", "mistral", "any"] },
+      "uniqueItems": true
+    },
     "predicate": {
       "type": "object",
       "required": ["subject_ref", "condition", "value"],
