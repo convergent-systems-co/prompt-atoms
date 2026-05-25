@@ -1,39 +1,30 @@
 # ATOMS.yml — catalog manifest for prompt-atoms
 #
-# See https://github.com/convergent-systems-co/atoms-spec for the canonical schema this conforms to.
+# Conforms to: https://schema-atoms.com/
+# spec_version: atoms-spec/v1.1.0
 
+spec_version: atoms-spec/v1.1.0
 name: prompt-atoms
 version: 0.1.0
-spec: atoms-spec/v1
-domain: prompt-atoms.com
-ecosystem:
-  federation: xdao.co
-  redirect: prompt.xdao.co
-
-purpose: |
+canonical_domain: prompt-atoms.com
+federation: convergent-systems.co
+description: |
   Prompt engineering as a canonical, machine-readable, versioned library — replacing closed vendor libraries and scattered cookbooks with typed personas, constraints, formats, tool-use templates, refusal patterns, and output schemas.
-
-atomTypes:
+atom_types:
   - persona
   - constraint
   - format-instruction
   - tool-use-template
   - refusal-pattern
   - output-schema
-
-compositionType: prompts
-compositionDir: prompts
-
-ruleTypes:
-  - model-compatibility
-  - token-length-constraint
-  - format-compatibility
-
-runtimeConsumers:
+composition_type: prompts
+composition_dir: prompts
+runtime_consumers:
   - aish
   - olympus
-
-license: Apache-2.0
-maintainers:
-  - name: Convergent Systems
-    contact: maintainers@xdao.co
+lifecycle:
+  current: draft
+licensing:
+  code: Apache-2.0
+steward: convergent-systems-co
+infrastructure_operator: convergent-systems-co
