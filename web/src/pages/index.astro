@@ -8,10 +8,17 @@ const counts = {
 };
 const byType: Record<string, number> = {};
 for (const a of catalog.atoms) byType[a.type] = (byType[a.type] ?? 0) + 1;
+const title = "PROMPT-Atoms";
+const tagline = "Prompt engineering as a canonical, machine-readable, versioned library.";
 ---
-<Base title="Home" description="Prompt engineering as a canonical, machine-readable, versioned library.">
-  <h1>prompt-atoms</h1>
-  <p style="font-size: 1.125rem; color: var(--muted); max-width: 40rem;">
+<Base title="Home" description={tagline}>
+  <section class="hero">
+    <img src="https://brand-atoms.com/dist/brands/atom-family/1.0.0/assets/atom-family-icon.png" alt="atom-family" class="hero-mark" />
+    <h1>{title}</h1>
+    <p class="lede">{tagline}</p>
+  </section>
+
+  <p style="font-size: 1.125rem; max-width: 40rem;">
     A typed, versioned, composable library of prompt-engineering primitives —
     personas, constraints, formats, tool-use templates, refusal patterns,
     output schemas — replacing closed vendor cookbooks and scattered
