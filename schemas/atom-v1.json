@@ -61,12 +61,14 @@
       "items": {
         "type": "string",
         "enum": [
+          "anthropic",
           "any",
           "claude",
           "gemini",
           "gpt",
           "llama",
           "mistral",
+          "ollama",
           "openai"
         ]
       },
