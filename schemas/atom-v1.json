@@ -4,7 +4,14 @@
   "title": "prompt-atoms v1 atom",
   "description": "A single atom in the prompt-atoms catalog. Discriminated by the top-level `type` field; one of: persona, constraint, format-instruction, tool-use-template, refusal-pattern, output-schema.",
   "type": "object",
-  "required": ["schema", "type", "id", "version", "name", "content"],
+  "required": [
+    "schema",
+    "type",
+    "id",
+    "version",
+    "name",
+    "content"
+  ],
   "additionalProperties": false,
   "properties": {
     "schema": {
@@ -13,7 +20,14 @@
     },
     "type": {
       "type": "string",
-      "enum": ["persona", "constraint", "format-instruction", "tool-use-template", "refusal-pattern", "output-schema"]
+      "enum": [
+        "persona",
+        "constraint",
+        "format-instruction",
+        "tool-use-template",
+        "refusal-pattern",
+        "output-schema"
+      ]
     },
     "id": {
       "type": "string",
@@ -35,30 +49,63 @@
     },
     "tags": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1, "maxLength": 40 },
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 40
+      },
       "uniqueItems": true
     },
     "vendors": {
       "type": "array",
-      "items": { "type": "string", "enum": ["claude", "gpt", "llama", "gemini", "mistral", "any"] },
+      "items": {
+        "type": "string",
+        "enum": [
+          "anthropic",
+          "any",
+          "claude",
+          "gemini",
+          "gpt",
+          "llama",
+          "mistral",
+          "ollama",
+          "openai"
+        ]
+      },
       "uniqueItems": true,
       "description": "LLM families this atom is known to work well with. 'any' means vendor-agnostic."
     },
     "content": {
       "type": "string",
-      "minLength": 1,
-      "description": "The prompt fragment itself. For atoms with structured content (output-schema, tool-use-template), use the schema or template form; the renderer assembles it into a prompt turn."
+      "minLength": 0,
+      "description": "The prompt fragment itself. For atoms with structured content (output-schema, tool-use-template), use the schema or template form; the renderer assembles it into a prompt turn. Empty string ('') is valid for stub/none atoms."
     },
     "applicable_turns": {
       "type": "array",
-      "items": { "type": "string", "enum": ["system", "user", "assistant", "tool"] },
+      "items": {
+        "type": "string",
+        "enum": [
+          "system",
+          "user",
+          "assistant",
+          "tool"
+        ]
+      },
       "uniqueItems": true,
       "description": "Which turns this atom legally appears in. Defaults to ['system'] for persona/constraint/format-instruction/refusal-pattern; ['tool'] for tool-use-template; ['system','assistant'] for output-schema."
     },
     "see_also": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^prompt-atoms://atoms/[a-z-]+/[a-z0-9-]+$" },
+      "items": {
+        "type": "string",
+        "pattern": "^prompt-atoms://atoms/[a-z-]+/[a-z0-9-]+$"
+      },
       "description": "Sibling atoms commonly composed with this one."
+    },
+    "persona_ref": {
+      "type": "string",
+      "description": "Reference to a base persona atom. Format: <catalog>/persona/<slug>.",
+      "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*/[a-z0-9-]+$"
     }
   }
 }
