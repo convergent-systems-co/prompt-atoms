@@ -77,8 +77,8 @@
     },
     "content": {
       "type": "string",
-      "minLength": 1,
-      "description": "The prompt fragment itself. For atoms with structured content (output-schema, tool-use-template), use the schema or template form; the renderer assembles it into a prompt turn."
+      "minLength": 0,
+      "description": "The prompt fragment itself. For atoms with structured content (output-schema, tool-use-template), use the schema or template form; the renderer assembles it into a prompt turn. Empty string ('') is valid for stub/none atoms."
     },
     "applicable_turns": {
       "type": "array",
@@ -101,6 +101,11 @@
         "pattern": "^prompt-atoms://atoms/[a-z-]+/[a-z0-9-]+$"
       },
       "description": "Sibling atoms commonly composed with this one."
+    },
+    "persona_ref": {
+      "type": "string",
+      "description": "Optional reference to a base persona atom this atom extends.",
+      "pattern": "^prompt-atoms://atoms/persona/[a-z0-9-]+$"
     }
   }
 }
