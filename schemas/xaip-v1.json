@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prompt-atoms.com/schemas/xaip-v1.json",
+  "title": "XAIP v1 — Extended AI Prompt",
+  "description": "A complete multi-turn AI prompt exchange. Covers the full conversation structure: a system turn built from atom refs (persona, constraints, format), parameterized user turns, tool definitions, and optional few-shot assistant examples.",
+  "type": "object",
+  "required": ["schema", "type", "id", "version", "name", "turns"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "https://prompt-atoms.com/schemas/xaip-v1.json"
+    },
+    "type": {
+      "type": "string",
+      "const": "xaip"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$",
+      "description": "URL-safe slug; unique within the XAIP catalog."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$",
+      "description": "SemVer of this XAIP definition."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "description": "Human-readable name for this prompt exchange."
+    },
+    "turns": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ordered sequence of turns in this exchange. A valid exchange must include at least one system or user turn.",
+      "items": { "$ref": "#/$defs/turn" }
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    }
+  },
+  "$defs": {
+    "turn": {
+      "type": "object",
+      "required": ["role"],
+      "additionalProperties": false,
+      "description": "A single turn in the multi-turn exchange. The role determines which optional fields are applicable: atom_refs for system/user, tool_def for tool, slots for any parameterized turn.",
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["system", "user", "assistant", "tool"],
+          "description": "The conversation role this turn occupies. 'system' establishes agent behavior via atom refs; 'user' provides the human message; 'tool' declares an available tool; 'assistant' provides a few-shot example response."
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Static text content for this turn. For system/user turns may coexist with atom_refs (content is appended after assembled refs). For assistant turns this is the few-shot example text. Not used when role is 'tool' (use tool_def instead)."
+        },
+        "atom_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Ordered list of atom references assembled into this turn's content. Primarily used in system turns to compose persona + constraints + format. May also appear in user turns for reusable user-turn fragments.",
+          "items": { "$ref": "#/$defs/atom_ref" }
+        },
+        "tool_def": {
+          "$ref": "#/$defs/tool_def",
+          "description": "Tool definition for this turn. Required when role is 'tool'; not valid for other roles."
+        },
+        "slots": {
+          "$ref": "#/$defs/slots",
+          "description": "Named parameters that callers substitute before the turn is sent. Slot names appear in content or atom_ref version strings as {{slot_name}}. Any role may declare slots."
+        }
+      }
+    },
+    "atom_ref": {
+      "type": "object",
+      "required": ["ref", "version"],
+      "additionalProperties": false,
+      "description": "A pinned reference to a single atom in the prompt-atoms catalog.",
+      "properties": {
+        "ref": {
+          "type": "string",
+          "pattern": "^prompt-atoms://atoms/[a-z-]+/[a-z0-9-]+$",
+          "description": "Canonical atom URI. Form: prompt-atoms://atoms/<type>/<id>."
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$",
+          "description": "Exact semver of the referenced atom. Pinned to prevent silent behavior drift."
+        }
+      }
+    },
+    "tool_def": {
+      "type": "object",
+      "required": ["name", "description", "input_schema"],
+      "additionalProperties": false,
+      "description": "Definition of a tool available to the model during this exchange. Mirrors the tool-call structure supported by major LLM providers.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+          "description": "Tool identifier sent to the model. Must be unique within the exchange's tool turns."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "description": "Natural-language description of what the tool does and when to call it. The model uses this to decide whether to invoke the tool."
+        },
+        "input_schema": {
+          "type": "object",
+          "description": "JSON Schema object describing the tool's input parameters. The renderer passes this to the provider API verbatim."
+        }
+      }
+    },
+    "slots": {
+      "type": "object",
+      "description": "Map of slot name to slot definition. Slot names must be valid identifiers (letters, digits, underscores). Values in content are referenced as {{slot_name}}.",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z_][a-zA-Z0-9_]{0,63}$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/slot_def"
+      }
+    },
+    "slot_def": {
+      "type": "object",
+      "required": ["type", "description"],
+      "additionalProperties": false,
+      "description": "Declaration of a single slot (substitution parameter) within a turn.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "array", "object"],
+          "description": "Expected JSON type of the substituted value."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Human-readable explanation of what this slot represents and how it affects the turn."
+        },
+        "required": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether callers must supply this slot. Defaults to true; optional slots may be omitted, leaving their {{placeholder}} unresolved unless a default is provided."
+        },
+        "default": {
+          "description": "Default value used when the slot is optional and no value is supplied. Type must match the slot's declared type."
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Non-functional metadata for discovery, tooling, and documentation.",
+      "properties": {
+        "description": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Long-form description of the exchange's purpose, intended context, and expected behavior."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 40 },
+          "uniqueItems": true,
+          "description": "Free-form labels for search and filtering in the catalog."
+        },
+        "vendors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["claude", "gpt", "llama", "gemini", "mistral", "any"]
+          },
+          "uniqueItems": true,
+          "description": "LLM families this exchange is known to work well with. 'any' means vendor-agnostic. Inherits from the referenced atoms' own vendor declarations when absent."
+        },
+        "use_cases": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "uniqueItems": true,
+          "description": "Short use-case labels (e.g., 'code-review', 'intent-classification', 'document-summarisation') describing where this exchange is intended to be applied."
+        }
+      }
+    }
+  }
+}
