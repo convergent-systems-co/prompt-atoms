@@ -104,8 +104,8 @@
     },
     "persona_ref": {
       "type": "string",
-      "description": "Optional reference to a base persona atom this atom extends.",
-      "pattern": "^prompt-atoms://atoms/persona/[a-z0-9-]+$"
+      "description": "Reference to a base persona atom. Format: <catalog>/persona/<slug>.",
+      "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*/[a-z0-9-]+$"
     }
   }
 }
